@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.streamlit/cache/
+.env
+*.xlsx
+dashboard_exportaciones.py
+dashboard_exportaciones.html
