@@ -1,6 +1,16 @@
 """
-Módulo 5: Drilldown interactivo a nivel de Subpartida arancelaria.
-Permite explorar el detalle granular de cada producto por subpartida.
+Módulo 4: Drilldown interactivo a nivel de Subpartida arancelaria.
+
+Jerarquía de selección: Sector → Grupo → Producto
+Al seleccionar un producto, se muestran:
+  1. Composición por subpartida (Top 15 por FOB) — bar horizontal
+  2. Evolución temporal de las principales subpartidas — líneas por año
+  3. Detalle de una subpartida específica:
+     - KPIs: FOB total, TM, precio implícito, N° destinos
+     - Evolución anual (barras) + Top 10 países destino (barras)
+
+Datos: load_data() — parquet completo con subpartidas (~1.09M filas)
+FOB en millones USD | TM en toneladas métricas
 """
 import streamlit as st
 import pandas as pd
