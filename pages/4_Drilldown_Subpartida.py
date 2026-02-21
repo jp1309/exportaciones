@@ -187,24 +187,3 @@ with col_b:
     fig4b.update_xaxes(gridcolor=GRID_COLOR)
     st.plotly_chart(fig4b, use_container_width=True)
 
-st.divider()
-
-# ── 4. Tabla completa de subpartidas ──────────────────────────────────
-st.subheader("4. Tabla detallada de subpartidas")
-
-tabla = prod_data.groupby(["Codigo_Subpartida", "Subpartida"]).agg(
-    FOB=("FOB", "sum"),
-    TM=("TM_Peso_Neto", "sum"),
-    Paises=("Pais_Destino", "nunique"),
-    Anio_Min=("Anio", "min"),
-    Anio_Max=("Anio", "max"),
-).sort_values("FOB", ascending=False).reset_index()
-
-tabla["Precio_USD_TM"] = np.where(tabla["TM"] > 0, tabla["FOB"] / tabla["TM"] * 1_000_000, 0)
-tabla["FOB"] = tabla["FOB"].apply(lambda x: f"{x:,.1f}")
-tabla["TM"] = tabla["TM"].apply(lambda x: f"{x:,.0f}")
-tabla["Precio_USD_TM"] = tabla["Precio_USD_TM"].apply(lambda x: f"{x:,.1f}")
-tabla.columns = ["Código", "Subpartida", "FOB (millones USD)", "TM",
-                  "N° Países", "Desde", "Hasta", "Precio (USD/TM)"]
-
-st.dataframe(tabla, use_container_width=True, height=500)
