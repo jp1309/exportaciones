@@ -35,7 +35,7 @@ Pagina principal con resumen ejecutivo del comercio exterior ecuatoriano:
 - Serie anual de exportaciones FOB con tasa de crecimiento
 - Top 10 productos y paises destino
 - Distribucion por region geografica (pie chart + area apilada)
-- Diversificacion temporal (N° de productos y destinos)
+- Diversificacion temporal (N° de productos y destinos activos)
 - Participacion por producto (Top 10 + Resto, stacked area al 100%)
 
 ### 1. Suma Movil 12M
@@ -43,30 +43,26 @@ Analiza la tendencia de largo plazo eliminando estacionalidad:
 - Suma movil 12M total (FOB + Volumen en doble eje)
 - Suma movil por producto (Top N seleccionable, colores fijos)
 - Suma movil por pais destino (Top N seleccionable, colores fijos)
-- Suma movil por sector economico
-- Tabla resumen con ultimo dato 12M por producto
 
 ### 2. Treemap Jerarquico
 Visualiza la estructura de exportaciones por jerarquia arancelaria:
-- Treemap completo: Sector → Grupo → Producto (coloreado por sector, valor o crecimiento)
-- Composicion por sector (treemap + sunburst)
+- Treemap completo: Sector → Grupo → Producto (coloreado por sector o valor absoluto)
 - Evolucion de la composicion sectorial (% del total, stacked area)
 - Treemap por pais destino (Top 15)
-- Tabla detallada por sector y grupo
 
 ### 3. Precio Implicito
 Calcula el precio promedio de exportacion (FOB/TM) con suavizado 12M:
-- Serie temporal con bandas de confianza (±2 sigma) y deteccion de outliers
-- KPIs: precio actual, variacion 12M, maximo y minimo historico
-- Precio implicito por pais destino (Top 10 destinos del producto)
 - Selector en cascada: Sector → Grupo → Producto
+- Selector de rango de anos en sidebar
+- Serie temporal con banda de confianza (±2 sigma) y deteccion de outliers
+- KPIs: precio actual, variacion 12M, maximo y minimo historico
 
 ### 4. Drilldown Subpartida
 Explora el detalle granular a nivel de subpartida arancelaria:
-- Composicion por subpartida (barras + pie chart)
-- Evolucion temporal de subpartidas principales
-- Detalle individual: KPIs, serie temporal y destinos por subpartida
-- Tabla completa con codigo, FOB, TM, precio y periodo
+- Selector en cascada: Sector → Grupo → Producto
+- Composicion por subpartida (Top 15 por FOB, barras horizontales)
+- Evolucion temporal de las principales subpartidas (lineas por ano)
+- Detalle de una subpartida especifica: KPIs, evolucion anual y top 10 paises destino
 
 ## Datos
 
@@ -76,7 +72,7 @@ Explora el detalle granular a nivel de subpartida arancelaria:
 | **Periodo** | Enero 2000 – Diciembre 2025 |
 | **Granularidad** | Mensual, por Producto Principal × Pais Destino × Subpartida |
 | **Registros** | ~1,090,000 filas |
-| **Variables** | FOB (millones USD), Volumen (TM), Codigo arancelario (6 digitos) |
+| **Variables** | FOB (millones USD), Volumen (TM), Codigo arancelario |
 
 ### Jerarquia arancelaria
 El codigo de producto (`Codigo_PP`, 6 digitos) define la jerarquia:
@@ -90,8 +86,8 @@ Excel BCE (2 sheets, 55 MB)
     ↓  etl_excel_to_parquet.py
 Parquet (11.9 MB)
     ↓  data_loader.py
-    ├── load_data()            → 1.09M filas (con subpartida)
-    └── load_data_aggregated() → 330K filas (sin subpartida)
+    ├── load_data()            → 1.09M filas (con subpartida, para Drilldown)
+    └── load_data_aggregated() → 330K filas (sin subpartida, para resto de modulos)
 ```
 
 ## Instalacion
@@ -103,7 +99,7 @@ Parquet (11.9 MB)
 
 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/tu-usuario/exportaciones.git
+git clone https://github.com/jp1309/exportaciones.git
 cd exportaciones
 ```
 
@@ -129,7 +125,7 @@ python etl_excel_to_parquet.py
 
 El dashboard usa paletas de colores fijas para mantener consistencia visual:
 
-- **20 productos principales**: colores fijos (petroleo = negro, camarones = rosa, banano = amarillo, etc.)
+- **~70 productos principales**: colores fijos (petroleo = negro, camarones = rosa, banano = amarillo, etc.)
 - **10 paises destino**: colores fijos (EE.UU. = azul marino, Panama = rojo, China = amarillo dorado, etc.)
 - **13 sectores**: colores tematicos (Mineria y Petroleo = negro, Pesca = cyan, Agricolas = verde, etc.)
 
@@ -137,12 +133,10 @@ Los colores se definen en `data_loader.py` en los diccionarios `PRODUCT_COLORS`,
 
 ## Filtros
 
-El dashboard ofrece dos tipos de filtros:
-
 ### Filtros globales (sidebar)
 Disponibles en Inicio, Suma Movil, Treemap y Drilldown:
 - Tipo de exportacion (Petrolero / No Petrolero / Todo)
-- Rango de anios
+- Rango de anos
 - Sector (con codigo numerico)
 - Grupo (con codigo numerico)
 - Producto
@@ -155,7 +149,7 @@ En Precio Implicito y Drilldown, selectores en cascada Sector → Grupo → Prod
 ## Tecnologias
 
 - **[Streamlit](https://streamlit.io/)** — Framework para dashboards interactivos
-- **[Plotly](https://plotly.com/python/)** — Graficos interactivos (go.Scatter, go.Bar, px.area, px.treemap, px.sunburst, px.imshow)
+- **[Plotly](https://plotly.com/python/)** — Graficos interactivos (go.Scatter, go.Bar, px.treemap, px.line)
 - **[Pandas](https://pandas.pydata.org/)** — Manipulacion y analisis de datos
 - **[PyArrow](https://arrow.apache.org/docs/python/)** — Lectura de archivos Parquet
 
