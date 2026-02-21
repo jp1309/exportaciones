@@ -30,7 +30,7 @@ with col_m:
 val_col = "FOB" if "FOB" in metrica else "TM_Peso_Neto"
 
 with col_a:
-    color_by = st.radio("Color por", ["Sector", "Valor absoluto", "Crecimiento % último año"], horizontal=True)
+    color_by = st.radio("Color por", ["Sector", "Valor absoluto"], horizontal=True)
 
 st.divider()
 
@@ -45,26 +45,7 @@ tree_data = dff.groupby(["Sector", "Grupo", "PP"]).agg(
 val_filter = "FOB" if val_col == "FOB" else "TM"
 tree_data = tree_data[tree_data[val_filter] > 0]
 
-if color_by == "Crecimiento % último año":
-    max_anio = dff["Anio"].max()
-    curr = dff[dff["Anio"] == max_anio].groupby("PP")[val_col].sum()
-    prev = dff[dff["Anio"] == max_anio - 1].groupby("PP")[val_col].sum()
-    crec = ((curr - prev) / prev * 100).fillna(0).replace([float('inf'), -float('inf')], 0)
-    crec_df = crec.reset_index()
-    crec_df.columns = ["PP", "Crecimiento"]
-    tree_data = tree_data.merge(crec_df, on="PP", how="left")
-    tree_data["Crecimiento"] = tree_data["Crecimiento"].fillna(0).clip(-100, 200)
-
-    fig1 = px.treemap(
-        tree_data,
-        path=["Sector", "Grupo", "PP"],
-        values="FOB" if val_col == "FOB" else "TM",
-        color="Crecimiento",
-        color_continuous_scale="RdYlGn",
-        color_continuous_midpoint=0,
-        hover_data={"FOB": ":.1f", "TM": ":.0f"},
-    )
-elif color_by == "Sector":
+if color_by == "Sector":
     # Coloreado discreto por sector
     fig1 = px.treemap(
         tree_data,
