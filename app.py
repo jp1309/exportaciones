@@ -75,6 +75,13 @@ Los datos provienen del **Banco Central del Ecuador (BCE)** y abarcan más de **
 con detalle mensual de valores FOB, volúmenes en toneladas métricas y clasificación arancelaria.
 """)
 
+st.info(
+    "¿Te interesa el otro lado de la balanza comercial? Explora también el "
+    "**[Dashboard de Importaciones del Ecuador](https://jp1309-importaciones.streamlit.app/)** — "
+    "estructura CUODE, precios implícitos CIF/TM y drilldown por subpartida.",
+    icon="🔗"
+)
+
 st.divider()
 
 # ── Módulos de visualización ──────────────────────────────────────────
