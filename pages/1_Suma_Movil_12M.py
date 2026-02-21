@@ -33,27 +33,36 @@ serie = dff.groupby("Fecha").agg(
 serie["FOB_12M"] = serie["FOB"].rolling(12, min_periods=12).sum()
 serie["TM_12M"] = serie["TM"].rolling(12, min_periods=12).sum()
 
+# Calcular rangos alineados (mismo nº de divisiones, ambos desde 0)
+fob_max = serie["FOB_12M"].max()
+tm_max  = serie["TM_12M"].max()
+N_TICKS = 5
+fob_step = fob_max / N_TICKS
+tm_step  = tm_max  / N_TICKS
+
 fig1 = make_subplots(specs=[[{"secondary_y": True}]])
-fig1.add_trace(go.Scatter(
-    x=serie["Fecha"], y=serie["FOB"], name="FOB mensual",
-    line=dict(color="#93c5fd", width=0.8), opacity=0.4
-), secondary_y=False)
 fig1.add_trace(go.Scatter(
     x=serie["Fecha"], y=serie["FOB_12M"], name="FOB suma móvil 12M",
     line=dict(color="#2563eb", width=2.5),
-    fill="tozeroy", fillcolor="rgba(37,99,235,0.06)"
+    fill="tozeroy", fillcolor="rgba(37,99,235,0.06)",
+    hovertemplate="%{x|%b %Y}: $%{y:,.1f} M<extra></extra>",
 ), secondary_y=False)
 fig1.add_trace(go.Scatter(
-    x=serie["Fecha"], y=serie["TM_12M"], name="TM suma móvil 12M",
-    line=dict(color="#f59e0b", width=2, dash="dot")
+    x=serie["Fecha"], y=serie["TM_12M"], name="Volumen suma móvil 12M (TM)",
+    line=dict(color="#f59e0b", width=2, dash="dot"),
+    hovertemplate="%{x|%b %Y}: %{y:,.0f} TM<extra></extra>",
 ), secondary_y=True)
 
 fig1.update_layout(
     height=420, hovermode="x unified", margin=dict(t=20, b=30),
     legend=dict(orientation="h", y=1.1), plot_bgcolor=PLOT_BG
 )
-fig1.update_yaxes(title_text="FOB (millones USD)", secondary_y=False, gridcolor=GRID_COLOR, tickformat=",.1f")
-fig1.update_yaxes(title_text="Volumen (TM)", secondary_y=True, gridcolor=GRID_COLOR)
+fig1.update_yaxes(title_text="FOB (millones USD)", secondary_y=False,
+                  gridcolor=GRID_COLOR, tickformat=",.1f",
+                  range=[0, fob_step * (N_TICKS + 1)], dtick=fob_step)
+fig1.update_yaxes(title_text="Volumen (TM)", secondary_y=True,
+                  gridcolor=GRID_COLOR, tickformat=",.0f",
+                  range=[0, tm_step * (N_TICKS + 1)], dtick=tm_step)
 fig1.update_xaxes(gridcolor=GRID_COLOR)
 st.plotly_chart(fig1, use_container_width=True)
 
@@ -80,17 +89,16 @@ for i, prod in enumerate(sel_prods):
     fig2.add_trace(go.Scatter(
         x=sub["Fecha"], y=sub["FOB_12M"], name=prod,
         line=dict(color=get_product_color(prod, i), width=2),
-        hovertemplate=f"<b>{prod}</b><br>%{{x|%b %Y}}: $%{{y:,.0f}} M<extra></extra>"
+        hovertemplate=f"<b>{prod}</b><br>%{{x|%b %Y}}: $%{{y:,.1f}} M<extra></extra>"
     ))
 
 fig2.update_layout(
     height=420, hovermode="x unified", margin=dict(t=20, b=30),
     legend=dict(orientation="h", y=-0.15, font=dict(size=10)),
-    yaxis_title="FOB suma 12M (millones USD)",
+    yaxis=dict(title="FOB suma móvil 12M (millones USD)", tickformat=",.1f", gridcolor=GRID_COLOR),
     plot_bgcolor=PLOT_BG
 )
 fig2.update_xaxes(gridcolor=GRID_COLOR)
-fig2.update_yaxes(gridcolor=GRID_COLOR, tickformat=",.1f")
 st.plotly_chart(fig2, use_container_width=True)
 
 st.divider()
@@ -116,17 +124,16 @@ for i, pais in enumerate(sel_paises):
     fig3.add_trace(go.Scatter(
         x=sub["Fecha"], y=sub["FOB_12M"], name=pais,
         line=dict(color=get_country_color(pais, i), width=2),
-        hovertemplate=f"<b>{pais}</b><br>%{{x|%b %Y}}: $%{{y:,.0f}} M<extra></extra>"
+        hovertemplate=f"<b>{pais}</b><br>%{{x|%b %Y}}: $%{{y:,.1f}} M<extra></extra>"
     ))
 
 fig3.update_layout(
     height=420, hovermode="x unified", margin=dict(t=20, b=30),
     legend=dict(orientation="h", y=-0.15, font=dict(size=10)),
-    yaxis_title="FOB suma 12M (millones USD)",
+    yaxis=dict(title="FOB suma móvil 12M (millones USD)", tickformat=",.1f", gridcolor=GRID_COLOR),
     plot_bgcolor=PLOT_BG
 )
 fig3.update_xaxes(gridcolor=GRID_COLOR)
-fig3.update_yaxes(gridcolor=GRID_COLOR, tickformat=",.1f")
 st.plotly_chart(fig3, use_container_width=True)
 
 st.divider()
@@ -148,17 +155,16 @@ for i, sec in enumerate(top_sectores):
         x=sub["Fecha"], y=sub["FOB_12M"], name=sec,
         mode="lines",
         line=dict(color=SECTOR_COLORS.get(sec, "#9ca3af"), width=2),
-        hovertemplate=f"<b>{sec}</b><br>%{{x|%b %Y}}: $%{{y:,.0f}} M<extra></extra>"
+        hovertemplate=f"<b>{sec}</b><br>%{{x|%b %Y}}: $%{{y:,.1f}} M<extra></extra>"
     ))
 
 fig4.update_layout(
     height=420, hovermode="x unified", margin=dict(t=20, b=30),
     legend=dict(orientation="h", y=-0.2, font=dict(size=10)),
-    yaxis_title="FOB suma 12M (millones USD)",
+    yaxis=dict(title="FOB suma móvil 12M (millones USD)", tickformat=",.1f", gridcolor=GRID_COLOR),
     plot_bgcolor=PLOT_BG
 )
 fig4.update_xaxes(gridcolor=GRID_COLOR)
-fig4.update_yaxes(gridcolor=GRID_COLOR, tickformat=",.1f")
 st.plotly_chart(fig4, use_container_width=True)
 
 # ── 5. Tabla resumen ────────────────────────────────────────────────
