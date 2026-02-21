@@ -261,37 +261,6 @@ with col_reg2:
     fig_reg2.update_xaxes(gridcolor="#f0f0f0")
     st.plotly_chart(fig_reg2, use_container_width=True)
 
-# ── Diversificación temporal ──────────────────────────────────────────
-st.subheader("Diversificación: N° de productos y destinos en el tiempo")
-
-div_data = dff.groupby(["Anio"]).agg(
-    N_productos=("PP", "nunique"),
-    N_destinos=("Pais_Destino", "nunique")
-).reset_index()
-
-fig_div = go.Figure()
-fig_div.add_trace(go.Scatter(
-    x=div_data["Anio"], y=div_data["N_productos"],
-    name="N° Productos", mode="lines+markers",
-    line=dict(color="#2563eb", width=2)
-))
-fig_div.add_trace(go.Scatter(
-    x=div_data["Anio"], y=div_data["N_destinos"],
-    name="N° Destinos", mode="lines+markers",
-    line=dict(color="#f59e0b", width=2), yaxis="y2"
-))
-fig_div.update_layout(
-    height=350, margin=dict(t=10, b=30),
-    yaxis=dict(title="N° Productos"),
-    yaxis2=dict(title="N° Destinos", overlaying="y", side="right"),
-    legend=dict(orientation="h", y=1.08),
-    hovermode="x unified",
-    plot_bgcolor="white"
-)
-fig_div.update_xaxes(gridcolor="#f0f0f0")
-fig_div.update_yaxes(gridcolor="#f0f0f0")
-st.plotly_chart(fig_div, use_container_width=True)
-
 st.divider()
 
 # ── Participación por producto (Top 10) ────────────────────────────────
@@ -334,6 +303,39 @@ fig_part.update_layout(height=400, margin=dict(t=30, b=30),
 fig_part.update_xaxes(gridcolor="#f0f0f0")
 fig_part.update_yaxes(gridcolor="#f0f0f0")
 st.plotly_chart(fig_part, use_container_width=True)
+
+st.divider()
+
+# ── Diversificación temporal ──────────────────────────────────────────
+st.subheader("Diversificación: N° de productos y destinos en el tiempo")
+
+div_data = dff.groupby(["Anio"]).agg(
+    N_productos=("PP", "nunique"),
+    N_destinos=("Pais_Destino", "nunique")
+).reset_index()
+
+fig_div = go.Figure()
+fig_div.add_trace(go.Scatter(
+    x=div_data["Anio"], y=div_data["N_productos"],
+    name="N° Productos", mode="lines+markers",
+    line=dict(color="#2563eb", width=2)
+))
+fig_div.add_trace(go.Scatter(
+    x=div_data["Anio"], y=div_data["N_destinos"],
+    name="N° Destinos", mode="lines+markers",
+    line=dict(color="#f59e0b", width=2), yaxis="y2"
+))
+fig_div.update_layout(
+    height=350, margin=dict(t=10, b=30),
+    yaxis=dict(title="N° Productos"),
+    yaxis2=dict(title="N° Destinos", overlaying="y", side="right"),
+    legend=dict(orientation="h", y=1.08),
+    hovermode="x unified",
+    plot_bgcolor="white"
+)
+fig_div.update_xaxes(gridcolor="#f0f0f0")
+fig_div.update_yaxes(gridcolor="#f0f0f0")
+st.plotly_chart(fig_div, use_container_width=True)
 
 st.divider()
 
