@@ -183,38 +183,3 @@ elif (sub_det := precio_df[precio_df["PP"] == prod_sel].dropna(subset=["Precio_I
 else:
     st.warning("No hay datos suficientes para calcular precio implícito de este producto.")
 
-st.divider()
-
-# ── 2. Precio implícito por país destino (usa producto del gráfico 1) ─
-st.subheader("2. Precio implícito por país de destino")
-st.caption("Compara el precio implícito del producto seleccionado arriba según el destino de exportación")
-
-if prod_sel is None:
-    st.info("Selecciona un producto en el gráfico 1 para ver su precio implícito por destino.", icon="👆")
-else:
-    prod_pais_data = dff[dff["PP"] == prod_sel]
-    top_paises_pp = prod_pais_data.groupby("Pais_Destino")["FOB"].sum().sort_values(ascending=False).head(10).index
-
-    precio_pais = prod_pais_data[prod_pais_data["Pais_Destino"].isin(top_paises_pp)].groupby(
-        "Pais_Destino"
-    ).agg(FOB=("FOB", "sum"), TM=("TM_Peso_Neto", "sum")).reset_index()
-    precio_pais["Precio"] = np.where(
-        precio_pais["TM"] > 0,
-        precio_pais["FOB"] / precio_pais["TM"] * 1_000_000,
-        0
-    )
-    precio_pais = precio_pais[precio_pais["Precio"] > 0].sort_values("Precio", ascending=True)
-
-    fig2 = go.Figure(go.Bar(
-        y=precio_pais["Pais_Destino"], x=precio_pais["Precio"], orientation="h",
-        marker_color="#8b5cf6",
-        hovertemplate="<b>%{y}</b><br>$%{x:,.0f} USD/TM<extra></extra>"
-    ))
-    fig2.update_layout(
-        height=400, margin=dict(l=200, t=10, b=30, r=20),
-        xaxis_title=f"Precio Implícito de {prod_sel} (USD/TM)",
-        plot_bgcolor=PLOT_BG
-    )
-    fig2.update_xaxes(gridcolor=GRID_COLOR)
-    fig2.update_yaxes(gridcolor=GRID_COLOR)
-    st.plotly_chart(fig2, use_container_width=True)
