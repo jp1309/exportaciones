@@ -156,8 +156,10 @@ st.subheader("Exportaciones anuales FOB")
 
 sa = dff.groupby("Anio").agg(FOB=("FOB", "sum"), TM=("TM_Peso_Neto", "sum")).reset_index()
 sa["Crec"] = sa["FOB"].pct_change() * 100
-# Limitar crecimiento para evitar distorsión visual con productos pequeños
-sa["Crec_display"] = sa["Crec"].clip(-100, 200)
+crec_min = sa["Crec"].min()
+crec_max = sa["Crec"].max()
+pad = (crec_max - crec_min) * 0.1
+y2_range = [crec_min - pad, crec_max + pad]
 
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(go.Bar(
@@ -166,17 +168,16 @@ fig.add_trace(go.Bar(
     hovertemplate="<b>%{x}</b><br>FOB: $%{y:,.1f} M<extra></extra>"
 ), secondary_y=False)
 fig.add_trace(go.Scatter(
-    x=sa["Anio"], y=sa["Crec_display"], name="Crecimiento %",
+    x=sa["Anio"], y=sa["Crec"], name="Crecimiento %",
     mode="lines+markers",
     line=dict(color="#dc2626", width=2), marker=dict(size=5),
-    customdata=sa["Crec"],
-    hovertemplate="<b>%{x}</b><br>Crec: %{customdata:.1f}%<extra></extra>"
+    hovertemplate="<b>%{x}</b><br>Crec: %{y:.1f}%<extra></extra>"
 ), secondary_y=True)
 fig.update_layout(
     height=380,
     yaxis=dict(title="FOB (millones USD)", tickformat=",.1f"),
     yaxis2=dict(title="Crecimiento (%)", overlaying="y", side="right",
-                zeroline=True, zerolinecolor="#555", range=[-100, 200]),
+                zeroline=True, zerolinecolor="#555", range=y2_range),
     legend=dict(orientation="h", y=1.08),
     hovermode="x unified",
     margin=dict(t=30, b=30),
@@ -198,7 +199,7 @@ with col_l:
         hovertemplate="<b>%{y}</b><br>$%{x:,.1f} M<extra></extra>"
     ))
     fig_p.update_layout(
-        height=400, margin=dict(l=200, t=10, b=30, r=20),
+        height=450, margin=dict(l=200, t=10, b=30, r=20),
         xaxis_title="FOB (millones USD)", plot_bgcolor="white",
     )
     fig_p.update_xaxes(gridcolor="#f0f0f0")
@@ -212,7 +213,7 @@ with col_r:
         hovertemplate="<b>%{y}</b><br>$%{x:,.1f} M<extra></extra>"
     ))
     fig_d.update_layout(
-        height=400, margin=dict(l=200, t=10, b=30, r=20),
+        height=450, margin=dict(l=200, t=10, b=30, r=20),
         xaxis_title="FOB (millones USD)", plot_bgcolor="white",
     )
     fig_d.update_xaxes(gridcolor="#f0f0f0")
