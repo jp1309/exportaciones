@@ -9,7 +9,7 @@ from plotly.subplots import make_subplots
 import plotly.express as px
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from data_loader import load_data_aggregated, filtros_sidebar, get_product_color, get_country_color, SECTOR_COLORS
+from data_loader import load_data_aggregated, filtros_sidebar, get_product_color, get_country_color
 
 st.set_page_config(page_title="Suma Móvil 12M", page_icon="📈", layout="wide")
 
@@ -127,50 +127,3 @@ fig3.update_layout(
 fig3.update_xaxes(gridcolor=GRID_COLOR)
 st.plotly_chart(fig3, use_container_width=True)
 
-st.divider()
-
-# ── 4. Suma móvil por sector ────────────────────────────────────────
-st.subheader("4. Suma móvil 12M por sector económico")
-
-sector_serie = dff.groupby(["Fecha", "Sector"]).agg(
-    FOB=("FOB", "sum")
-).reset_index().sort_values(["Sector", "Fecha"])
-
-top_sectores = dff.groupby("Sector")["FOB"].sum().sort_values(ascending=False).head(6).index
-
-fig4 = go.Figure()
-for i, sec in enumerate(top_sectores):
-    sub = sector_serie[sector_serie["Sector"] == sec].copy()
-    sub["FOB_12M"] = sub["FOB"].rolling(12, min_periods=12).sum()
-    fig4.add_trace(go.Scatter(
-        x=sub["Fecha"], y=sub["FOB_12M"], name=sec,
-        mode="lines",
-        line=dict(color=SECTOR_COLORS.get(sec, "#9ca3af"), width=2),
-        hovertemplate=f"<b>{sec}</b><br>%{{x|%b %Y}}: $%{{y:,.1f}} M<extra></extra>"
-    ))
-
-fig4.update_layout(
-    height=420, hovermode="x unified", margin=dict(t=20, b=30),
-    legend=dict(orientation="h", y=-0.2, font=dict(size=10)),
-    yaxis=dict(title="FOB suma móvil 12M (millones USD)", tickformat=",.1f", gridcolor=GRID_COLOR),
-    plot_bgcolor=PLOT_BG
-)
-fig4.update_xaxes(gridcolor=GRID_COLOR)
-st.plotly_chart(fig4, use_container_width=True)
-
-# ── 5. Tabla resumen ────────────────────────────────────────────────
-st.divider()
-st.subheader("5. Tabla: último dato suma móvil 12M por producto")
-
-ultimo_mes = serie["Fecha"].max()
-rango_12m = dff[dff["Fecha"] > (ultimo_mes - pd.DateOffset(months=12))]
-tabla = rango_12m.groupby("PP").agg(
-    FOB_12M=("FOB", "sum"),
-    TM_12M=("TM_Peso_Neto", "sum"),
-    N_Paises=("Pais_Destino", "nunique")
-).sort_values("FOB_12M", ascending=False).reset_index()
-tabla["FOB_12M"] = tabla["FOB_12M"].apply(lambda x: f"{x:,.1f}")
-tabla["TM_12M"] = tabla["TM_12M"].apply(lambda x: f"{x:,.0f}")
-tabla.columns = ["Producto", "FOB 12M (millones USD)", "TM 12M", "N° Países"]
-
-st.dataframe(tabla, use_container_width=True, height=500)
