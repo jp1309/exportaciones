@@ -52,7 +52,7 @@ fig1.update_layout(
 )
 fig1.update_yaxes(title_text="FOB (millones USD)", secondary_y=False,
                   gridcolor=GRID_COLOR, tickformat=",.1f")
-fig1.update_yaxes(title_text="Volumen (TM)", secondary_y=True,
+fig1.update_yaxes(title_text="Volumen suma móvil 12M (TM)", secondary_y=True,
                   gridcolor=GRID_COLOR, tickformat=",.0f")
 fig1.update_xaxes(gridcolor=GRID_COLOR)
 st.plotly_chart(fig1, use_container_width=True)
