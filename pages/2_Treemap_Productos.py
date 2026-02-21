@@ -74,44 +74,8 @@ st.plotly_chart(fig1, use_container_width=True)
 
 st.divider()
 
-# ── 2. Treemap por sector + Sunburst ──────────────────────────────────
-st.subheader("2. Composición por sector")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    sector_data = dff.groupby("Sector").agg(
-        FOB=("FOB", "sum"), TM=("TM_Peso_Neto", "sum")
-    ).reset_index()
-    sector_data = sector_data[sector_data[val_filter] > 0]
-    fig2 = px.treemap(
-        sector_data, path=["Sector"],
-        values="FOB" if val_col == "FOB" else "TM",
-        color="Sector",
-        color_discrete_map=SECTOR_COLORS,
-    )
-    fig2.update_layout(height=400, margin=dict(t=10, b=10, l=10, r=10),
-                       showlegend=False)
-    st.plotly_chart(fig2, use_container_width=True)
-
-with col2:
-    sun_data = dff.groupby(["Sector", "Grupo"]).agg(
-        FOB=("FOB", "sum")
-    ).reset_index()
-    sun_data = sun_data[sun_data["FOB"] > 0]
-    fig3 = px.sunburst(
-        sun_data, path=["Sector", "Grupo"], values="FOB",
-        color="Sector",
-        color_discrete_map=SECTOR_COLORS,
-    )
-    fig3.update_layout(height=400, margin=dict(t=10, b=10, l=10, r=10),
-                       showlegend=False)
-    st.plotly_chart(fig3, use_container_width=True)
-
-st.divider()
-
-# ── 3. Evolución de la composición sectorial ─────────────────────────
-st.subheader("3. Evolución de la composición sectorial (% del total)")
+# ── 2. Evolución de la composición sectorial ─────────────────────────
+st.subheader("2. Evolución de la composición sectorial (% del total)")
 
 evol = dff.groupby(["Anio", "Sector"])[val_col].sum().reset_index()
 total_anual = evol.groupby("Anio")[val_col].sum().rename("Total")
@@ -145,7 +109,7 @@ st.plotly_chart(fig4, use_container_width=True)
 st.divider()
 
 # ── 4. Treemap por país destino ──────────────────────────────────────
-st.subheader("4. Treemap: Sector → Producto → País destino (Top 15 países)")
+st.subheader("3. Treemap: Sector → Producto → País destino (Top 15 países)")
 
 top15_paises = dff.groupby("Pais_Destino")["FOB"].sum().sort_values(ascending=False).head(15).index
 tree_pais = dff[dff["Pais_Destino"].isin(top15_paises)].groupby(
@@ -164,7 +128,7 @@ st.plotly_chart(fig5, use_container_width=True)
 
 # ── 5. Tabla detalle ─────────────────────────────────────────────────
 st.divider()
-st.subheader("5. Detalle por Sector y Grupo")
+st.subheader("4. Detalle por Sector y Grupo")
 
 tabla = dff.groupby(["Sector", "Grupo", "PP"]).agg(
     FOB=("FOB", "sum"),
