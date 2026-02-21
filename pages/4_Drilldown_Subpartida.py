@@ -83,39 +83,26 @@ top_sub = prod_data.groupby(["Codigo_Subpartida", "Subpartida"]).agg(
     Paises=("Pais_Destino", "nunique")
 ).sort_values("FOB", ascending=False).head(15).reset_index()
 
-col1, col2 = st.columns(2)
-
-with col1:
-    fig1 = go.Figure(go.Bar(
-        y=top_sub["Subpartida"].str[:50], x=top_sub["FOB"],
-        orientation="h", marker_color="#2563eb",
-        customdata=top_sub[["Codigo_Subpartida", "TM", "Paises"]],
-        hovertemplate=(
-            "<b>%{y}</b><br>"
-            "Código: %{customdata[0]}<br>"
-            "FOB: $%{x:,.0f} M<br>"
-            "TM: %{customdata[1]:,.0f}<br>"
-            "Países: %{customdata[2]}<extra></extra>"
-        )
-    ))
-    fig1.update_layout(
-        height=500, margin=dict(l=300, t=10, b=30, r=20),
-        xaxis_title="FOB (millones USD)",
-        yaxis=dict(autorange="reversed"),
-        plot_bgcolor=PLOT_BG
+fig1 = go.Figure(go.Bar(
+    y=top_sub["Subpartida"].str[:50], x=top_sub["FOB"],
+    orientation="h", marker_color="#2563eb",
+    customdata=top_sub[["Codigo_Subpartida", "TM", "Paises"]],
+    hovertemplate=(
+        "<b>%{y}</b><br>"
+        "Código: %{customdata[0]}<br>"
+        "FOB: $%{x:,.0f} M<br>"
+        "TM: %{customdata[1]:,.0f}<br>"
+        "Países: %{customdata[2]}<extra></extra>"
     )
-    fig1.update_xaxes(gridcolor=GRID_COLOR)
-    st.plotly_chart(fig1, use_container_width=True)
-
-with col2:
-    fig1b = px.pie(top_sub, names="Subpartida", values="FOB",
-                   hole=0.4, color_discrete_sequence=px.colors.qualitative.Set3)
-    fig1b.update_layout(height=500, margin=dict(t=20, b=20))
-    fig1b.update_traces(
-        textposition="inside", textinfo="percent",
-        hovertemplate="<b>%{label}</b><br>$%{value:,.0f} M<br>%{percent}<extra></extra>"
-    )
-    st.plotly_chart(fig1b, use_container_width=True)
+))
+fig1.update_layout(
+    height=500, margin=dict(l=300, t=10, b=30, r=20),
+    xaxis_title="FOB (millones USD)",
+    yaxis=dict(autorange="reversed"),
+    plot_bgcolor=PLOT_BG
+)
+fig1.update_xaxes(gridcolor=GRID_COLOR)
+st.plotly_chart(fig1, use_container_width=True)
 
 st.divider()
 
