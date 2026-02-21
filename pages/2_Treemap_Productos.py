@@ -125,18 +125,3 @@ fig5 = px.treemap(
 fig5.update_layout(height=650, margin=dict(t=30, b=10, l=10, r=10),
                    showlegend=False)
 st.plotly_chart(fig5, use_container_width=True)
-
-# ── 5. Tabla detalle ─────────────────────────────────────────────────
-st.divider()
-st.subheader("4. Detalle por Sector y Grupo")
-
-tabla = dff.groupby(["Sector", "Grupo", "PP"]).agg(
-    FOB=("FOB", "sum"),
-    TM=("TM_Peso_Neto", "sum"),
-    Paises=("Pais_Destino", "nunique")
-).sort_values("FOB", ascending=False).reset_index()
-tabla["FOB"] = tabla["FOB"].apply(lambda x: f"{x:,.1f}")
-tabla["TM"] = tabla["TM"].apply(lambda x: f"{x:,.0f}")
-tabla.columns = ["Sector", "Grupo", "Producto", "FOB (millones USD)", "TM", "N° Países"]
-
-st.dataframe(tabla, use_container_width=True, height=500)
