@@ -22,6 +22,13 @@ GRID_COLOR = "#f0f0f0"
 
 dff = load_data_aggregated()
 
+# ── Filtro de tiempo en sidebar ───────────────────────────────────────
+st.sidebar.title("Filtros")
+anio_min, anio_max = int(dff["Anio"].min()), int(dff["Anio"].max())
+rango = st.sidebar.slider("Rango de años", anio_min, anio_max,
+                          (anio_min, anio_max), key="pi_anio")
+dff = dff[(dff["Anio"] >= rango[0]) & (dff["Anio"] <= rango[1])]
+
 st.title("Precio Implícito de Exportaciones")
 st.caption(
     "Precio implícito = FOB acumulado 12 meses / Toneladas métricas acumuladas 12 meses | "
