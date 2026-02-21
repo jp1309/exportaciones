@@ -188,6 +188,18 @@ def _asignar_region(pais):
     return "Otros"
 
 
+# Colores fijos por región geográfica (consistentes con importaciones)
+REGION_COLORS = {
+    "América del Norte": "#66c2a5",  # Verde agua   (Set2[0])
+    "América Latina":    "#fc8d62",  # Naranja       (Set2[1])
+    "Europa":            "#8da0cb",  # Azul lavanda  (Set2[2])
+    "Asia":              "#e78ac3",  # Rosa          (Set2[3])
+    "Medio Oriente":     "#a6d854",  # Verde lima    (Set2[4])
+    "África":            "#ffd92f",  # Amarillo      (Set2[5])
+    "Oceanía":           "#e5c494",  # Beige         (Set2[6])
+    "Otros":             "#b3b3b3",  # Gris          (Set2[7])
+}
+
 # Códigos de productos petroleros
 PETROLERO_CODIGOS = {"150101", "230601"}
 

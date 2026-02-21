@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-from data_loader import load_data_aggregated, filtros_sidebar, PRODUCT_COLORS, get_product_color, get_country_color
+from data_loader import load_data_aggregated, filtros_sidebar, PRODUCT_COLORS, get_product_color, get_country_color, REGION_COLORS
 
 st.set_page_config(
     page_title="Inicio – Exportaciones Ecuador",
@@ -230,23 +230,35 @@ col_reg1, col_reg2 = st.columns(2)
 
 with col_reg1:
     reg_data = dff.groupby("Region")["FOB"].sum().sort_values(ascending=False).reset_index()
-    fig_reg = px.pie(reg_data, names="Region", values="FOB",
-                     hole=0.45, color_discrete_sequence=px.colors.qualitative.Set2)
-    fig_reg.update_layout(height=380, margin=dict(t=20, b=20))
-    fig_reg.update_traces(textposition="inside", textinfo="percent+label",
-                          hovertemplate="<b>%{label}</b><br>$%{value:,.1f} M<br>%{percent}<extra></extra>")
+    fig_reg = go.Figure(go.Pie(
+        labels=reg_data["Region"], values=reg_data["FOB"],
+        marker_colors=[REGION_COLORS.get(r, "#b3b3b3") for r in reg_data["Region"]],
+        hole=0.45, textposition="inside", textinfo="percent+label",
+        hovertemplate="<b>%{label}</b><br>$%{value:,.1f} M<br>%{percent}<extra></extra>",
+    ))
+    fig_reg.update_layout(height=380, margin=dict(t=20, b=20), showlegend=True,
+                          legend=dict(orientation="v", font=dict(size=10)))
     st.plotly_chart(fig_reg, use_container_width=True)
 
 with col_reg2:
     reg_evol = dff.groupby(["Anio", "Region"])["FOB"].sum().reset_index()
-    fig_reg2 = px.area(reg_evol, x="Anio", y="FOB", color="Region",
-                       labels={"FOB": "FOB (millones USD)", "Anio": "Año"},
-                       color_discrete_sequence=px.colors.qualitative.Set2)
-    fig_reg2.update_layout(height=380, margin=dict(t=20, b=30),
-                           legend=dict(orientation="h", y=-0.2, font=dict(size=10)),
-                           plot_bgcolor="white")
+    regiones_ord = reg_evol.groupby("Region")["FOB"].sum().sort_values(ascending=False).index.tolist()
+    fig_reg2 = go.Figure()
+    for reg_name in reversed(regiones_ord):
+        sub = reg_evol[reg_evol["Region"] == reg_name]
+        color = REGION_COLORS.get(reg_name, "#b3b3b3")
+        fig_reg2.add_trace(go.Scatter(
+            x=sub["Anio"], y=sub["FOB"], name=reg_name,
+            mode="lines", stackgroup="one",
+            line=dict(width=0.5, color=color), fillcolor=color,
+            hovertemplate=f"<b>{reg_name}</b><br>$%{{y:,.1f}} M<extra></extra>",
+        ))
+    fig_reg2.update_layout(
+        height=380, margin=dict(t=20, b=30), plot_bgcolor="white",
+        yaxis=dict(title="FOB (millones USD)", tickformat=",.1f", gridcolor="#f0f0f0"),
+        legend=dict(orientation="h", y=-0.2, font=dict(size=10)),
+    )
     fig_reg2.update_xaxes(gridcolor="#f0f0f0")
-    fig_reg2.update_yaxes(gridcolor="#f0f0f0")
     st.plotly_chart(fig_reg2, use_container_width=True)
 
 # ── Diversificación temporal ──────────────────────────────────────────
