@@ -285,9 +285,9 @@ area_data = pd.concat([area_top, resto], ignore_index=True)
 all_cats = cats + [resto_label]
 
 fig_part = go.Figure()
-for prod in reversed(all_cats):
+for i, prod in enumerate(reversed(all_cats)):
     sub = area_data[area_data["PP"] == prod]
-    color = "#d1d5db" if prod == resto_label else PRODUCT_COLORS.get(prod, "#d1d5db")
+    color = "#d1d5db" if prod == resto_label else get_product_color(prod, i)
     fig_part.add_trace(go.Scatter(
         x=sub["Anio"], y=sub["Participacion"], name=prod,
         mode="lines", stackgroup="one",
