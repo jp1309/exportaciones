@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-from data_loader import load_data_aggregated, filtros_sidebar, PRODUCT_COLORS
+from data_loader import load_data_aggregated, filtros_sidebar, PRODUCT_COLORS, get_product_color, get_country_color
 
 st.set_page_config(
     page_title="Inicio – Exportaciones Ecuador",
@@ -193,9 +193,10 @@ col_l, col_r = st.columns(2)
 
 with col_l:
     tp = dff.groupby("PP")["FOB"].sum().sort_values(ascending=True).tail(10).reset_index()
+    colors_p = [get_product_color(p, i) for i, p in enumerate(tp["PP"])]
     fig_p = go.Figure(go.Bar(
         y=tp["PP"], x=tp["FOB"], orientation="h",
-        marker_color="#2563eb",
+        marker_color=colors_p,
         hovertemplate="<b>%{y}</b><br>$%{x:,.1f} M<extra></extra>"
     ))
     fig_p.update_layout(
@@ -207,9 +208,10 @@ with col_l:
 
 with col_r:
     td = dff.groupby("Pais_Destino")["FOB"].sum().sort_values(ascending=True).tail(10).reset_index()
+    colors_d = [get_country_color(p, i) for i, p in enumerate(td["Pais_Destino"])]
     fig_d = go.Figure(go.Bar(
         y=td["Pais_Destino"], x=td["FOB"], orientation="h",
-        marker_color="#f59e0b",
+        marker_color=colors_d,
         hovertemplate="<b>%{y}</b><br>$%{x:,.1f} M<extra></extra>"
     ))
     fig_d.update_layout(
