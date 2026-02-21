@@ -186,7 +186,7 @@ else:
 st.divider()
 
 # ── 2. Precio implícito por país destino (usa producto del gráfico 1) ─
-st.subheader("2. Precio implícito por país destino")
+st.subheader("2. Precio implícito por país de destino")
 st.caption("Compara el precio implícito del producto seleccionado arriba según el destino de exportación")
 
 if prod_sel is None:
