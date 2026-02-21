@@ -33,13 +33,6 @@ serie = dff.groupby("Fecha").agg(
 serie["FOB_12M"] = serie["FOB"].rolling(12, min_periods=12).sum()
 serie["TM_12M"] = serie["TM"].rolling(12, min_periods=12).sum()
 
-# Calcular rangos alineados (mismo nº de divisiones, ambos desde 0)
-fob_max = serie["FOB_12M"].max()
-tm_max  = serie["TM_12M"].max()
-N_TICKS = 5
-fob_step = fob_max / N_TICKS
-tm_step  = tm_max  / N_TICKS
-
 fig1 = make_subplots(specs=[[{"secondary_y": True}]])
 fig1.add_trace(go.Scatter(
     x=serie["Fecha"], y=serie["FOB_12M"], name="FOB suma móvil 12M",
@@ -58,11 +51,9 @@ fig1.update_layout(
     legend=dict(orientation="h", y=1.1), plot_bgcolor=PLOT_BG
 )
 fig1.update_yaxes(title_text="FOB (millones USD)", secondary_y=False,
-                  gridcolor=GRID_COLOR, tickformat=",.1f",
-                  range=[0, fob_step * (N_TICKS + 1)], dtick=fob_step)
+                  gridcolor=GRID_COLOR, tickformat=",.1f")
 fig1.update_yaxes(title_text="Volumen (TM)", secondary_y=True,
-                  gridcolor=GRID_COLOR, tickformat=",.0f",
-                  range=[0, tm_step * (N_TICKS + 1)], dtick=tm_step)
+                  gridcolor=GRID_COLOR, tickformat=",.0f")
 fig1.update_xaxes(gridcolor=GRID_COLOR)
 st.plotly_chart(fig1, use_container_width=True)
 
