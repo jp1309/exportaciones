@@ -55,7 +55,7 @@ fig1.update_yaxes(title_text="FOB (millones USD)", secondary_y=False,
 fig1.update_yaxes(title_text="Volumen suma móvil 12M (TM)", secondary_y=True,
                   gridcolor=GRID_COLOR, tickformat=",.0f")
 fig1.update_xaxes(gridcolor=GRID_COLOR)
-st.plotly_chart(fig1, use_container_width=True)
+st.plotly_chart(fig1, width="stretch")
 
 st.divider()
 
@@ -90,7 +90,7 @@ fig2.update_layout(
     plot_bgcolor=PLOT_BG
 )
 fig2.update_xaxes(gridcolor=GRID_COLOR)
-st.plotly_chart(fig2, use_container_width=True)
+st.plotly_chart(fig2, width="stretch")
 
 st.divider()
 
@@ -125,5 +125,5 @@ fig3.update_layout(
     plot_bgcolor=PLOT_BG
 )
 fig3.update_xaxes(gridcolor=GRID_COLOR)
-st.plotly_chart(fig3, use_container_width=True)
+st.plotly_chart(fig3, width="stretch")
 

@@ -112,7 +112,7 @@ fig1.update_layout(
     plot_bgcolor=PLOT_BG
 )
 fig1.update_xaxes(gridcolor=GRID_COLOR)
-st.plotly_chart(fig1, use_container_width=True)
+st.plotly_chart(fig1, width="stretch")
 
 st.divider()
 
@@ -136,7 +136,7 @@ fig2.update_layout(
 )
 fig2.update_xaxes(gridcolor=GRID_COLOR)
 fig2.update_yaxes(gridcolor=GRID_COLOR, tickformat=",.1f")
-st.plotly_chart(fig2, use_container_width=True)
+st.plotly_chart(fig2, width="stretch")
 
 st.divider()
 
@@ -180,7 +180,7 @@ with col_a:
     )
     fig4a.update_xaxes(gridcolor=GRID_COLOR)
     fig4a.update_yaxes(gridcolor=GRID_COLOR, tickformat=",.1f")
-    st.plotly_chart(fig4a, use_container_width=True)
+    st.plotly_chart(fig4a, width="stretch")
 
 with col_b:
     sub_pais = sub_data.groupby("Pais_Destino")["FOB"].sum().sort_values(ascending=True).tail(10).reset_index()
@@ -195,5 +195,5 @@ with col_b:
         plot_bgcolor=PLOT_BG
     )
     fig4b.update_xaxes(gridcolor=GRID_COLOR)
-    st.plotly_chart(fig4b, use_container_width=True)
+    st.plotly_chart(fig4b, width="stretch")
 

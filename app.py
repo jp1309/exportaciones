@@ -192,7 +192,7 @@ fig.update_layout(
 )
 fig.update_xaxes(gridcolor="#f0f0f0")
 fig.update_yaxes(gridcolor="#f0f0f0")
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # ── Top productos y países lado a lado ───────────────────────────────
 st.subheader("Top 10 productos y destinos")
@@ -211,7 +211,7 @@ with col_l:
         xaxis_title="FOB (millones USD)", plot_bgcolor="white",
     )
     fig_p.update_xaxes(gridcolor="#f0f0f0")
-    st.plotly_chart(fig_p, use_container_width=True)
+    st.plotly_chart(fig_p, width="stretch")
 
 with col_r:
     td = dff.groupby("Pais_Destino")["FOB"].sum().sort_values(ascending=True).tail(10).reset_index()
@@ -226,7 +226,7 @@ with col_r:
         xaxis_title="FOB (millones USD)", plot_bgcolor="white",
     )
     fig_d.update_xaxes(gridcolor="#f0f0f0")
-    st.plotly_chart(fig_d, use_container_width=True)
+    st.plotly_chart(fig_d, width="stretch")
 
 st.divider()
 
@@ -245,7 +245,7 @@ with col_reg1:
     ))
     fig_reg.update_layout(height=380, margin=dict(t=20, b=20), showlegend=True,
                           legend=dict(orientation="v", font=dict(size=10)))
-    st.plotly_chart(fig_reg, use_container_width=True)
+    st.plotly_chart(fig_reg, width="stretch")
 
 with col_reg2:
     reg_evol = dff.groupby(["Anio", "Region"])["FOB"].sum().reset_index()
@@ -266,7 +266,7 @@ with col_reg2:
         legend=dict(orientation="h", y=-0.2, font=dict(size=10)),
     )
     fig_reg2.update_xaxes(gridcolor="#f0f0f0")
-    st.plotly_chart(fig_reg2, use_container_width=True)
+    st.plotly_chart(fig_reg2, width="stretch")
 
 st.divider()
 
@@ -309,7 +309,7 @@ fig_part.update_layout(height=400, margin=dict(t=30, b=30),
                                   dtick=10, range=[0, 100]))
 fig_part.update_xaxes(gridcolor="#f0f0f0")
 fig_part.update_yaxes(gridcolor="#f0f0f0")
-st.plotly_chart(fig_part, use_container_width=True)
+st.plotly_chart(fig_part, width="stretch")
 
 st.divider()
 
@@ -342,7 +342,7 @@ fig_div.update_layout(
 )
 fig_div.update_xaxes(gridcolor="#f0f0f0")
 fig_div.update_yaxes(gridcolor="#f0f0f0")
-st.plotly_chart(fig_div, use_container_width=True)
+st.plotly_chart(fig_div, width="stretch")
 
 st.divider()
 

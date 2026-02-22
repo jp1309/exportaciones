@@ -70,7 +70,7 @@ fig1.update_layout(height=650, margin=dict(t=30, b=10, l=10, r=10))
 fig1.update_traces(
     hovertemplate="<b>%{label}</b><br>FOB: $%{customdata[0]:,.1f} M<br>TM: %{customdata[1]:,.0f}<extra></extra>"
 )
-st.plotly_chart(fig1, use_container_width=True)
+st.plotly_chart(fig1, width="stretch")
 
 st.divider()
 
@@ -104,7 +104,7 @@ fig4.update_layout(
 )
 fig4.update_xaxes(gridcolor=GRID_COLOR)
 fig4.update_yaxes(gridcolor=GRID_COLOR)
-st.plotly_chart(fig4, use_container_width=True)
+st.plotly_chart(fig4, width="stretch")
 
 st.divider()
 
@@ -124,4 +124,4 @@ fig5 = px.treemap(
 )
 fig5.update_layout(height=650, margin=dict(t=30, b=10, l=10, r=10),
                    showlegend=False)
-st.plotly_chart(fig5, use_container_width=True)
+st.plotly_chart(fig5, width="stretch")

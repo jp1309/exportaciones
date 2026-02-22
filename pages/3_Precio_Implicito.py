@@ -175,7 +175,7 @@ elif (sub_det := precio_df[precio_df["PP"] == prod_sel].dropna(subset=["Precio_I
     )
     fig1.update_xaxes(gridcolor=GRID_COLOR)
     fig1.update_yaxes(gridcolor=GRID_COLOR, tickformat=",.0f")
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, width="stretch")
 
     # KPIs del producto seleccionado
     col_k1, col_k2, col_k3, col_k4 = st.columns(4)
